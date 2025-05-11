@@ -243,8 +243,6 @@ def offline_rl_search_loop(scenario, ta_wrapper, logger):
             # Get the instances for the new race
             instance_id, instances = instance_selector.get_subset(result_race.instance_set_id + 1)
 
-            # [OK] todo: in der ersten Iteration schauen, ob nur NANs bei den Werten sind bei results
-
             # Iterate over all UUID keys in the results dictionary and check if NAs were produced
             for uuid_key, inner_dict in results.items():
                 for key, value in inner_dict.items():

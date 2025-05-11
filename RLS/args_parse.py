@@ -45,8 +45,6 @@ def parse_args():
     hp.add_argument('--quality_penalty', type=int, default=500)
     hp.add_argument('--quality_match', type=str, default="")
     hp.add_argument('--quality_extract', type=str, default="")
-    # [OK] TODO: error ausgeben, falls leer wenn run_obj = quality gesetzt ist
-
 
     hp.add_argument('--rl', type=str, default="beta")
     hp.add_argument('--norm', type=str, default="fnorm")
