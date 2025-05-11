@@ -29,9 +29,14 @@ def get_ta_arguments_from_pcs(para_file):
             if line == "":
                 continue
 
-            line_split = line.split(None, 1)
-            param_name = line_split[0].replace(" ", "")
-            param_info = line_split[1] # TODO This will error if forbidden params do not have any spaces
+            try:
+                line_split = line.split(None, 1)
+                param_name = line_split[0].replace(" ", "")
+                param_info = line_split[1]
+            except IndexError:
+                warnings.warn(f"Ignoring malformed or incomplete line in .pcs: '{line}'")
+                continue
+
 
             if "|" not in param_info:
 
