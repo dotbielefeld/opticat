@@ -8,16 +8,16 @@ from enum import Enum
 import ray
 import numpy as np
 
-def check_log_folder(folder_for_run = None):
-    if folder_for_run == None:
+def check_log_folder(folder_for_run=None):
+    if folder_for_run is None:
         folder_for_run = "latest"
 
-    ff = ""
-    for f in folder_for_run.split("/"):
-        ff = ff + "/" + f
-        if not os.path.exists(f'./{ff}'):
-            os.makedirs(f'./{ff}')
+    # Normalize path
+    folder_path = os.path.abspath(folder_for_run)
 
+    # Create the folder (and parents if needed) if it doesn't exist
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
 
 class TournamentEncoder(json.JSONEncoder):
     def default(self, o):
