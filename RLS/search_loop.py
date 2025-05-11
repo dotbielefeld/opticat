@@ -35,7 +35,7 @@ from race_dispatcher import RaceDispatcher
 from instance_features import Feature_Transfomer
 from ppo_ac_beta import PPO_AC_BETA
 from ppo_ac_normal import PPO_AC_NORMAL
-from ac_util import smooth_curve, make_prediction, save_to_json
+from ac_util import smooth_curve, make_prediction, save_to_json, convert_to_serializable
 
 
 
@@ -243,6 +243,19 @@ def offline_rl_search_loop(scenario, ta_wrapper, logger):
             # Get the instances for the new race
             instance_id, instances = instance_selector.get_subset(result_race.instance_set_id + 1)
 
+            # [OK] todo: in der ersten Iteration schauen, ob nur NANs bei den Werten sind bei results
+
+            # Iterate over all UUID keys in the results dictionary and check if NAs were produced
+            for uuid_key, inner_dict in results.items():
+                for key, value in inner_dict.items():
+                    if value is None or (isinstance(value, float) and np.isnan(value)):
+                        raise ValueError(f"The target algorithm command was incorrectly set: NA values were produced. ")
+
+
+            # wenn scenario quality gesetzt ist und alle NANs sind, Fehler ausgeben: target algorithmus-command nicht korrekt
+            # Für runtime: runtime für alle < 1 Sekunde? Dann warning ausgeben (wrapper evtl nicht korrekt)
+            # Problem:  python "C:/Users/Admin/Desktop/opticat/input/ta/griewank/griewank.py"  --x1=3.6223513793945314 --x2=1.7205224609375 --seed=7126
+            # gibt NANs in der Liste zurück
             races.remove(result_race)
             global_cache.put_race_history.remote(result_race)
 
@@ -321,7 +334,7 @@ def offline_rl_search_loop(scenario, ta_wrapper, logger):
         instances=scenario.instance_set,
         scenario=scenario,
         rl_agent=rl_agent,
-        output_file=f"./{scenario.log_folder}/final_training.json"
+        output_file=f"{scenario.log_folder}/final_training.json"
     )
 
     if scenario.test_instances:
@@ -330,10 +343,10 @@ def offline_rl_search_loop(scenario, ta_wrapper, logger):
             instances=scenario.test_instances,
             scenario=scenario,
             rl_agent=rl_agent,
-            output_file=f"./{scenario.log_folder}/final_test.json"
+            output_file=f"{scenario.log_folder}/final_test.json"
         )
 
-    rl_agent.save_model(f"./{scenario.log_folder}/models/actor_final.pth")
+    rl_agent.save_model(f"{scenario.log_folder}/models/actor_final.pth")
 
     plt.plot(metrics['episode_loss'])
     plt.title("Training Loss Over Time")
@@ -369,7 +382,11 @@ def offline_rl_search_loop(scenario, ta_wrapper, logger):
 
 
     for metric_name, metric_data in metrics.items():
-        save_to_json(metric_data, f"{scenario.log_folder}/{metric_name}.json")
+
+        # Convert the data before saving it as a JSON file
+        cleaned_data = convert_to_serializable(metric_data)
+
+        save_to_json(cleaned_data, f"{scenario.log_folder}/{metric_name}.json")
 
     global_cache.save_rt_results.remote()
     global_cache.save_tournament_history.remote()
