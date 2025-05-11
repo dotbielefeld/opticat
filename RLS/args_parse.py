@@ -3,8 +3,12 @@ import argparse
 class LoadOptionsFromFile (argparse.Action):
     def __call__ (self, parser, namespace, values, option_string=None):
         with values as f:
-            parser.parse_args(f.read().split(), namespace)
+            options = f.read().split()
 
+            if not options:
+                print("Warning: no arguments read from input file")
+
+            parser.parse_args(options, namespace)
 
 def parse_args():
     """
@@ -16,7 +20,7 @@ def parse_args():
     hp = parser.add_argument_group("Hyperparameters of util")
     so = parser.add_argument_group("Scenario options")
 
-    hp.add_argument('--file', type=open, action=LoadOptionsFromFile)
+    hp.add_argument('--opticat_arguments_file', type=open, action=LoadOptionsFromFile)
 
     hp.add_argument('--seed', default=42, type=int)
     hp.add_argument('--log_folder', type=str, default="latest")
@@ -41,7 +45,6 @@ def parse_args():
     hp.add_argument('--quality_penalty', type=int, default=500)
     hp.add_argument('--quality_match', type=str, default="")
     hp.add_argument('--quality_extract', type=str, default="")
-
 
     hp.add_argument('--rl', type=str, default="beta")
     hp.add_argument('--norm', type=str, default="fnorm")
@@ -71,5 +74,12 @@ def parse_args():
     so.add_argument('--paramfile', type=str)
     so.add_argument('--test_instance_file', type=str)
 
+    parsed_args = parser.parse_args()
 
-    return vars(parser.parse_args())
+    print(f"Parsed args: {parsed_args}")
+
+    # Ensure that --quality_match and --quality_extract arguments are passed when run_obj is set to "quality"
+    if parsed_args.run_obj == "quality" and (parsed_args.quality_match == "" or parsed_args.quality_extract == ""):
+        raise ValueError("Empty values passed to --quality_match and --quality_extract arguments. Please pass these parameters to the function call when setting --run_obj to 'quality'")
+
+    return vars(parsed_args)
