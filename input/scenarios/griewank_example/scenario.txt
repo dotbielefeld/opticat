@@ -1,0 +1,5 @@
+paramfile = ./input/ta/griewank/params.pcs
+run_obj = quality 
+cutoff_time = 100
+wallclock_limit = 3600 
+instance_file = ./input/data/griewank/training_glucose.txt

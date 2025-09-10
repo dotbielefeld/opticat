@@ -31,6 +31,7 @@ sys.path.append(os.getcwd())
 
 if __name__ == "__main__":
     rl_args = parse_args()
+    # print(rl_args)
 
 
     # make the wrapper that gives the ta commands a module

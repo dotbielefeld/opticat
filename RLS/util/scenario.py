@@ -68,7 +68,7 @@ class Scenario:
             warnings.warn("No test instances provided. Will only train")
             scenario["test_instances"] = []
 
-        if scenario["feature_file"] != None:
+        if scenario["feature_free"] and scenario["feature_file"] != None:
             scenario["features"], scenario["feature_names"] = read_instance_features(f'{scenario["feature_file"]}')
         elif scenario["feature_free"] is True:
             scenario["features"] = {entry: np.ones(10, dtype=np.single) for entry in scenario["instance_set"] + scenario["test_instances"]}

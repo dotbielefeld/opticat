@@ -104,3 +104,20 @@ def save_to_json(data, filename):
     """Save data to a JSON file."""
     with open(filename, 'w') as file:
         json.dump(data, file, indent=4)
+
+def convert_to_serializable(obj):
+    """Recursively convert NumPy types to native Python types."""
+    if isinstance(obj, dict):
+        return {k: convert_to_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_serializable(i) for i in obj]
+    elif isinstance(obj, tuple):
+        return tuple(convert_to_serializable(i) for i in obj)
+    elif isinstance(obj, (np.integer,)):
+        return int(obj)
+    elif isinstance(obj, (np.floating,)):
+        return float(obj)
+    elif isinstance(obj, (np.ndarray,)):
+        return obj.tolist()
+    else:
+        return obj

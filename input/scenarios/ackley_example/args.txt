@@ -1,0 +1,50 @@
+--seed 34
+--par 1
+
+--quality_penalty 1000
+
+--rl beta
+--init_weights xavier 
+
+--relu_advantage True
+
+--norm znorm
+--v_mode mean_batch
+
+--entropy_loss False
+
+--ec 0
+
+
+--termination_criterion runtime
+
+--delete_features True
+--feature_free True
+
+--localmode True
+--num_cpu 4
+--instance_set_size 1
+--batchsize 40
+--racesize 40
+
+
+--num_neurons 512
+
+--num_blocks 9
+
+--clip_value 0.5
+
+
+--ppo_epochs 10
+
+--lr 0.0001
+
+--lr_schedule False
+
+--memory_limit 1536
+--cutoff_time 15
+
+--log_folder C:/Users/Admin/Desktop/test_logs_ackley
+
+--wrapper_mod_name wrapper.ackley_wrapper
+--wrapper_class_name BlackboxWrapper
